@@ -3,6 +3,7 @@ import 'package:majestic_banyuangi/pages/home_page.dart';
 import 'package:majestic_banyuangi/pages/signin_page.dart';
 import 'package:majestic_banyuangi/pages/signup_page.dart';
 import 'package:majestic_banyuangi/pages/update_page.dart';
+import 'package:majestic_banyuangi/pages/detail_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignupPage(),
         '/home': (context) => const HomePage(),
         '/update': (context) => const UpdatePage(),
+        '/detail': (context) => const DetailPage(),
       },
     );
   }
