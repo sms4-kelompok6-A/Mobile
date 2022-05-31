@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:majestic_banyuangi/pages/detail_page.dart';
 import 'package:majestic_banyuangi/pages/home_page.dart';
+import 'package:majestic_banyuangi/pages/profile_page.dart';
 import 'package:majestic_banyuangi/pages/signin_page.dart';
 import 'package:majestic_banyuangi/pages/signup_page.dart';
+import 'package:majestic_banyuangi/pages/splash_page.dart';
 import 'package:majestic_banyuangi/pages/update_page.dart';
-import 'package:majestic_banyuangi/pages/detail_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,15 +18,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Majestic Banyuwangi',
+      title: 'Majestic Banyuangi',
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
+        '/': (context) => const SplashPage(),
         '/signin': (context) => const SigninPage(),
         '/signup': (context) => const SignupPage(),
         '/home': (context) => const HomePage(),
-        '/update': (context) => const UpdatePage(),
         '/detail': (context) => const DetailPage(),
+        '/profile': (context) => const ProfilePage(),
+        '/update-profile': (context) => const UpdatePage(),
       },
     );
   }

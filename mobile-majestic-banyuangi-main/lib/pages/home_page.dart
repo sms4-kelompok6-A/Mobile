@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:majestic_banyuangi/widgets/card_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -106,10 +107,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   controller: _tabController,
                   children: [
                     Column(
-                      children: const [],
+                      children: const [
+                        CardWidget(),
+                      ],
                     ),
                     Column(
-                      children: const [],
+                      children: const [
+                        CardWidget(),
+                      ],
                     ),
                   ],
                 ),
