@@ -258,7 +258,7 @@ class DetailPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: const [
                                 Text(
-                                  "Nabila Putri",
+                                  "Admin",
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 14,
