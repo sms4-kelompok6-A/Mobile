@@ -142,7 +142,7 @@ class SignupPage extends StatelessWidget {
         height: 48,
         width: double.infinity,
         child: TextButton(
-          onPressed: (() => Navigator.pushNamed(context, '/home')),
+          onPressed: () {},
           child: const Text(
             'Sign In',
             style: TextStyle(
