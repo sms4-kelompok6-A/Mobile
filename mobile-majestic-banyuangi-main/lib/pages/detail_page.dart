@@ -180,7 +180,7 @@ class DetailPage extends StatelessWidget {
                                 height: 3,
                               ),
                               Text(
-                                "nabilaputri@gmail.com",
+                                "admin@gmail.com",
                                 style: TextStyle(
                                   color: Colors.grey,
                                   fontSize: 12,
