@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:majestic/config.dart';
+import 'package:provider/provider.dart';
+import 'package:majestic/models/auth_model.dart';
+import 'package:majestic/providers/auth_provider.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    AuthModel? user = authProvider.user;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Profile"),
@@ -38,10 +45,15 @@ class ProfilePage extends StatelessWidget {
                             color: Colors.white,
                             width: 5,
                           ),
-                          image: const DecorationImage(
+                          image: DecorationImage(
                             fit: BoxFit.cover,
                             image: NetworkImage(
-                                'https://images.pexels.com/photos/1832324/pexels-photo-1832324.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
+                              user!.profilePhotoPath == null
+                                  ? user.profile.toString()
+                                  : Config.url +
+                                      '/' +
+                                      user.profilePhotoPath.toString(),
+                            ),
                           ),
                         ),
                       ),
@@ -59,8 +71,7 @@ class ProfilePage extends StatelessWidget {
                   color: const Color(0xFF9FA3A2),
                   borderRadius: BorderRadius.circular(5),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: TextButton(
                   onPressed: (() =>
                       Navigator.pushNamed(context, '/update-profile')),
@@ -69,7 +80,7 @@ class ProfilePage extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.white,
                       letterSpacing: 1,
-                      fontSize: 14,
+                      fontSize: 13,
                     ),
                   ),
                 ),
@@ -92,49 +103,52 @@ class ProfilePage extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    "Username",
-                    style: TextStyle(
+                    "${user.name}",
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                   Text(
-                    "Example@gmail.com",
-                    style: TextStyle(
+                    "${user.email}",
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                   Text(
-                    "Phone Number",
-                    style: TextStyle(
+                    "${user.phoneNumber}",
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
-                  Text(
-                    "Logout",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2,
+                  GestureDetector(
+                    onTap: () => Navigator.pushReplacementNamed(context, '/signin'),
+                    child: const Text(
+                      "Logout",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                      ), 
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                 ],

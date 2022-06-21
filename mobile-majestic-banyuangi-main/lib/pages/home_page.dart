@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:majestic_banyuangi/widgets/card_widget.dart';
+import 'package:majestic/config.dart';
+import 'package:majestic/providers/event_provider.dart';
+import 'package:majestic/providers/order_provider.dart';
+import 'package:majestic/widgets/card_event.dart';
+import 'package:provider/provider.dart';
+import 'package:majestic/models/auth_model.dart';
+import 'package:majestic/providers/auth_provider.dart';
+import 'package:majestic/providers/destination_provider.dart';
+import 'package:majestic/widgets/card_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -24,10 +32,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    AuthModel? user = authProvider.user;
+
+    DestinationProvider destinationProvider =
+        Provider.of<DestinationProvider>(context);
+    EventProvider eventProvider = Provider.of<EventProvider>(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -42,21 +57,41 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       child: Container(
                         width: 40,
                         height: 40,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: const Color(0xFF73C993), width: 2),
                           shape: BoxShape.circle,
                           image: DecorationImage(
                             fit: BoxFit.cover,
                             image: NetworkImage(
-                                'https://images.pexels.com/photos/1832324/pexels-photo-1832324.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
+                              user!.profilePhotoPath == null
+                                  ? user.profile.toString()
+                                  : Config.url +
+                                      '/' +
+                                      user.profilePhotoPath.toString(),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    Image.asset(
-                      'assets/images/majestic_banyuangi.png',
-                      height: 60.0,
-                      fit: BoxFit.cover,
-                    ),
+                    IconButton(
+                      alignment: Alignment.centerRight,
+                      onPressed: () async {
+                        await Provider.of<OrderProvider>(context, listen: false)
+                            .getProducts(
+                          id: authProvider.user!.id.toString(),
+                        );
+                        await Provider.of<OrderProvider>(context, listen: false)
+                            .getProductsDone(
+                          id: authProvider.user!.id.toString(),
+                        );
+                        Navigator.pushNamed(context, '/order');
+                      },
+                      icon: const Icon(
+                        Icons.notifications,
+                        size: 30,
+                      ),
+                    )
                   ],
                 ),
               ),
@@ -99,23 +134,70 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ),
               ),
               Container(
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                margin: const EdgeInsets.symmetric(vertical: 14),
                 width: double.maxFinite,
                 height: MediaQuery.of(context).size.height,
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-                    Column(
-                      children: const [
-                        CardWidget(),
-                      ],
+                    // Column(
+                    //   children: destinationProvider.products
+                    //       .map(
+                    //         (destination) => CardWidget(destination, user),
+                    //       )
+                    //       .toList(),
+                    // ),
+                    ListView.builder(
+                      itemCount: destinationProvider.products.length,
+                      itemBuilder: (BuildContext context, int i) {
+                        if (i == destinationProvider.products.length - 1) {
+                          return Column(
+                            children: [
+                              CardWidget(
+                                destinationProvider.products[i],
+                                user,
+                              ),
+                              SizedBox(
+                                height: 300,
+                              ),
+                            ],
+                          );
+                        }
+                        return CardWidget(
+                          destinationProvider.products[i],
+                          user,
+                        );
+                      },
                     ),
-                    Column(
-                      children: const [
-                        CardWidget(),
-                      ],
+                    ListView.builder(
+                      itemCount: eventProvider.products.length,
+                      itemBuilder: (BuildContext context, int i) {
+                        if (i == eventProvider.products.length - 1) {
+                          return Column(
+                            children: [
+                              CardWidget(
+                                eventProvider.products[i],
+                                user,
+                              ),
+                              SizedBox(
+                                height: 300,
+                              ),
+                            ],
+                          );
+                        }
+                        return CardWidget(
+                          eventProvider.products[i],
+                          user,
+                        );
+                      },
                     ),
+                    // Column(
+                    //   children: eventProvider.products
+                    //       .map(
+                    //         (event) => CardEvent(event, user),
+                    //       )
+                    //       .toList(),
+                    // ),
                   ],
                 ),
               )

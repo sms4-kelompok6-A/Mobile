@@ -1,10 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:majestic/providers/destination_provider.dart';
+import 'package:majestic/providers/event_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:majestic/providers/auth_provider.dart';
+import 'package:majestic/widgets/loading_btn_widget.dart';
 
-class SigninPage extends StatelessWidget {
+class SigninPage extends StatefulWidget {
   const SigninPage({Key? key}) : super(key: key);
 
   @override
+  State<SigninPage> createState() => _SigninPageState();
+}
+
+class _SigninPageState extends State<SigninPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  bool isLoading = false;
+
+  @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    handleLogin() async {
+      setState(() {
+        isLoading = true;
+      });
+
+      if (await authProvider.login(
+        email: _emailController.text,
+        password: _passwordController.text,
+      )) {
+        FocusManager.instance.primaryFocus?.unfocus();
+        await Provider.of<DestinationProvider>(context, listen: false)
+            .getProducts(
+          id: authProvider.user!.id.toString(),
+        );
+        await Provider.of<EventProvider>(context, listen: false).getProducts(
+          id: authProvider.user!.id.toString(),
+        );
+        Navigator.pushNamed(context, '/home');
+      } else {
+        FocusManager.instance.primaryFocus?.unfocus();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Login Gagal!",
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+      setState(() {
+        isLoading = false;
+      });
+    }
+
     Widget emailInput() {
       return Container(
         margin: const EdgeInsets.only(top: 30, right: 40, left: 40),
@@ -25,7 +76,7 @@ class SigninPage extends StatelessWidget {
             Container(
               width: MediaQuery.of(context).size.width * 100,
               padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 18.0),
               // height: 48,
               decoration: BoxDecoration(
                 color: const Color(0xFFE0E0E0),
@@ -34,8 +85,10 @@ class SigninPage extends StatelessWidget {
               child: Expanded(
                 child: TextFormField(
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                   ),
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration.collapsed(
                     hintText: "Enter your email address",
                   ),
@@ -67,7 +120,7 @@ class SigninPage extends StatelessWidget {
             Container(
               width: MediaQuery.of(context).size.width * 100,
               padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 18.0),
               // height: 48,
               decoration: BoxDecoration(
                 color: const Color(0xFFE0E0E0),
@@ -75,8 +128,9 @@ class SigninPage extends StatelessWidget {
               ),
               child: Expanded(
                 child: TextFormField(
+                  controller: _passwordController,
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                   ),
                   obscureText: true,
                   decoration: const InputDecoration.collapsed(
@@ -99,7 +153,7 @@ class SigninPage extends StatelessWidget {
         height: 48,
         width: double.infinity,
         child: TextButton(
-          onPressed: (() => Navigator.pushNamed(context, '/home')),
+          onPressed: handleLogin,
           child: const Text(
             'Sign In',
             style: TextStyle(
@@ -125,7 +179,7 @@ class SigninPage extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: (() => Navigator.pushNamed(context, '/signup')),
+              onTap: () => Navigator.pushNamed(context, '/signup'),
               child: const Text(
                 " Sign Up",
                 style: TextStyle(
@@ -200,7 +254,7 @@ class SigninPage extends StatelessWidget {
             ),
             emailInput(),
             passwordInput(),
-            buttonSignin(),
+            isLoading ? const LoadingBtnWidget() : buttonSignin(),
             const Spacer(),
             footer(),
           ],
